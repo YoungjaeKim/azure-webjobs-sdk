@@ -341,6 +341,7 @@ namespace Dashboard.ApiControllers
             metadataSnapshot.EndTime = entry.EndTime;
             metadataSnapshot.Succeeded = entry.Succeeded;
             metadataSnapshot.Heartbeat = entry.Heartbeat;
+            metadataSnapshot.HeartbeatExpiredTime = entry.HeartbeatExpiredTime;
             return new InvocationLogViewModel(metadataSnapshot, HostInstanceHasHeartbeat(metadataSnapshot));
         }
 
@@ -626,6 +627,12 @@ namespace Dashboard.ApiControllers
 
         private bool? HostInstanceHasHeartbeat(FunctionInstanceSnapshot snapshot)
         {
+            if (snapshot.HeartbeatExpiredTime.HasValue)
+            {
+                var now = DateTime.UtcNow;
+                return snapshot.HeartbeatExpiredTime.Value > now;
+            }
+
             HeartbeatDescriptor heartbeat = snapshot.Heartbeat;
 
             if (heartbeat == null)

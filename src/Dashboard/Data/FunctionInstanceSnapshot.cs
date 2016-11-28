@@ -45,6 +45,9 @@ namespace Dashboard.Data
 
         public DateTimeOffset? EndTime { get; set; }
 
+        // For fast-style logging. 
+        public DateTime? HeartbeatExpiredTime { get; set; }
+
         // If specified, text output is provided in the string. Ignore the OutputBlob. 
         public string InlineOutputText { get; set; }
 

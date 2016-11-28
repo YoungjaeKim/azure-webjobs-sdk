@@ -16,6 +16,7 @@ namespace Dashboard.Data
         private const string StartTimeKey = "StartTime";
         private const string EndTimeKey = "EndTime";
         private const string SucceededKey = "Succeeded";
+        private const string HeartbeatExpritedTimeKey = "Heartbeat2Name";
         private const string HeartbeatSharedContainerNameKey = "HeartbeatSharedContainerName";
         private const string HeartbeatSharedDirectoryNameKey = "HeartbeatSharedDirectoryName";
         private const string HeartbeatInstanceBlobNameKey = "HeartbeatInstanceBlobName";
@@ -64,6 +65,9 @@ namespace Dashboard.Data
             get { return _succeeded; }
         }
 
+        // Summary heartbeat from fast logger
+        public DateTime? HeartbeatExpiredTime { get; set; }
+
         public HeartbeatDescriptor Heartbeat
         {
             get { return _heartbeat; }
@@ -102,7 +106,7 @@ namespace Dashboard.Data
             string heartbeatSharedDirectoryName = GetMetadataString(metadata, HeartbeatSharedDirectoryNameKey);
             string heartbeatInstanceBlobName = GetMetadataString(metadata, HeartbeatInstanceBlobNameKey);
             int? heartbeatExpirationInSeconds = GetMetadataNullableInt32(metadata, HeartbeatExpirationInSecondsKey);
-
+                        
             HeartbeatDescriptor heartbeat;
 
             if (heartbeatSharedContainerName != null && heartbeatSharedDirectoryName != null
@@ -121,7 +125,9 @@ namespace Dashboard.Data
                 heartbeat = null;
             }
 
-            return new RecentInvocationEntry(id.Value, displayTitle, startTime, endTime, succeeded, heartbeat);
+            var entry = new RecentInvocationEntry(id.Value, displayTitle, startTime, endTime, succeeded, heartbeat);
+            entry.HeartbeatExpiredTime = GetMetadataNullableDateTime(metadata, HeartbeatExpritedTimeKey);
+            return entry;
         }
 
         public static Dictionary<string, string> CreateMetadata(FunctionInstanceSnapshot snapshot)
@@ -138,6 +144,8 @@ namespace Dashboard.Data
             AddMetadataNullableDateTimeOffset(metadata, StartTimeKey, snapshot.StartTime);
             AddMetadataNullableDateTimeOffset(metadata, EndTimeKey, snapshot.EndTime);
             AddMetadataNullableBoolean(metadata, SucceededKey, snapshot.Succeeded);
+
+            AddMetadataNullableDateTime(metadata, HeartbeatExpritedTimeKey, snapshot.HeartbeatExpiredTime);
 
             HeartbeatDescriptor heartbeat = snapshot.Heartbeat;
 
@@ -162,6 +170,15 @@ namespace Dashboard.Data
             if (value != null)
             {
                 metadata.Add(key, value);
+            }
+        }
+
+        private static void AddMetadataNullableDateTime(IDictionary<string, string> metadata, string key, 
+            DateTime? value)
+        {
+            if (value.HasValue)
+            {
+                metadata.Add(key, value.Value.ToString(CultureInfo.InvariantCulture));
             }
         }
 
@@ -217,6 +234,22 @@ namespace Dashboard.Data
             }
 
             return metadata[key];
+        }
+
+        private static DateTime? GetMetadataNullableDateTime(IDictionary<string, string> metadata, string key)
+        {
+            Debug.Assert(metadata != null);
+
+            if (!metadata.ContainsKey(key))
+            {
+                return null;
+            }
+
+            string unparsed = metadata[key];
+            DateTime parsed = DateTime.Parse(unparsed, CultureInfo.InvariantCulture);
+            DateTime parsedUtc = new DateTime(parsed.Ticks, DateTimeKind.Utc);
+                        
+            return parsed;
         }
 
         private static DateTimeOffset? GetMetadataNullableDateTimeOffset(IDictionary<string, string> metadata,
