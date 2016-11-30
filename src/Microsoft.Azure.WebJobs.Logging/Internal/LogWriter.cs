@@ -253,7 +253,7 @@ namespace Microsoft.Azure.WebJobs.Logging
             }
             foreach (var item in items)
             {
-                item.Refresh();
+                item.Refresh(_flushInterval);
             }
             return items;
         }

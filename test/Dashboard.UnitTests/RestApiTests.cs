@@ -320,7 +320,7 @@ namespace Dashboard.UnitTests
             public class TestFunctionInstanceLogItem : FunctionInstanceLogItem
             {
                 public Action<TestFunctionInstanceLogItem> OnRefresh;
-                public override void Refresh()
+                public override void Refresh(TimeSpan pollingFrequency)
                 {
                     OnRefresh(this);
                 }

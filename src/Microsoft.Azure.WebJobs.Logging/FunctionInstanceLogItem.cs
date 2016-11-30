@@ -56,9 +56,11 @@ namespace Microsoft.Azure.WebJobs.Logging
         /// <summary>
         /// Given log item a chance to refresh. 
         /// </summary>
-        public virtual void Refresh()
+        /// <param name="pollingFrequency">Approximate frequency at which refresh is called. This can be used to determine the heartbeat expiration time. </param>
+        public virtual void Refresh(TimeSpan pollingFrequency)
         {
-            this.HeartbeatExpireTime = DateTime.UtcNow.AddMinutes(50);
+            var gracePeriod = pollingFrequency.TotalMilliseconds * 3;
+            this.HeartbeatExpireTime = DateTime.UtcNow.AddMilliseconds(gracePeriod);
         }
 
         /// <summary>
