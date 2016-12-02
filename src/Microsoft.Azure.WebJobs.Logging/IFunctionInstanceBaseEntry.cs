@@ -23,9 +23,11 @@ namespace Microsoft.Azure.WebJobs.Logging
         string FunctionName { get; }
 
         /// <summary>
-        /// If present, this is the UTC expiration time for the heartbeat. If expired, then assume the function was abandoned. 
+        /// If present, this is the UTC expiration time for the heartbeat. 
+        /// If this is greater than the current time, then assume the function was abandoned (NeverFinished), 
+        /// else assume the function is still running. 
         /// </summary>
-        DateTime? HeartbeatExpireTime { get; }
+        DateTime? FunctionInstanceHeartbeatExpiry { get; }
 
         /// <summary>UTC time that the function started executing.</summary>
         DateTime StartTime { get; }
@@ -63,10 +65,10 @@ namespace Microsoft.Azure.WebJobs.Logging
             }
             else
             {
-                if (item.HeartbeatExpireTime.HasValue)
+                if (item.FunctionInstanceHeartbeatExpiry.HasValue)
                 {
                     var now = DateTime.UtcNow;
-                    bool isExpired = item.HeartbeatExpireTime.Value < now;
+                    bool isExpired = item.FunctionInstanceHeartbeatExpiry.Value < now;
                     if (isExpired)
                     {
                         return FunctionInstanceStatus.Abandoned;

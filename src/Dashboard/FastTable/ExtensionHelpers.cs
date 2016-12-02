@@ -17,7 +17,7 @@ namespace Dashboard.Data
                 FunctionShortName = entity.DisplayName,
                 DisplayTitle = entity.DisplayName, // skips Argument check
                 StartTime = entity.StartTime,
-                HeartbeatExpiredTime = entity.HeartbeatExpireTime,
+                FunctionInstanceHeartbeatExpiry = entity.FunctionInstanceHeartbeatExpiry,
                 Succeeded = entity.IsSucceeded(),
                 EndTime = entity.EndTime
             };
@@ -39,7 +39,7 @@ namespace Dashboard.Data
                 FunctionShortName = entity.FunctionName,
 
                 StartTime = entity.StartTime,
-                HeartbeatExpiredTime = entity.HeartbeatExpireTime,
+                FunctionInstanceHeartbeatExpiry = entity.FunctionInstanceHeartbeatExpiry,
                 EndTime = entity.EndTime,                
 
                 Reason = entity.TriggerReason,

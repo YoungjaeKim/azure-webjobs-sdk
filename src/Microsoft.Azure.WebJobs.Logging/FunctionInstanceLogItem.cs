@@ -51,7 +51,7 @@ namespace Microsoft.Azure.WebJobs.Logging
         /// It's always possible a node loses network connectity, and so we appear abandoned, but 
         /// the function successfully completes</summary>
         /// <inheritdoc/>
-        public DateTime? HeartbeatExpireTime { get; set; }
+        public DateTime? FunctionInstanceHeartbeatExpiry { get; set; }
 
         /// <summary>
         /// Given log item a chance to refresh. 
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.WebJobs.Logging
         public virtual void Refresh(TimeSpan pollingFrequency)
         {
             var gracePeriod = pollingFrequency.TotalMilliseconds * 3;
-            this.HeartbeatExpireTime = DateTime.UtcNow.AddMilliseconds(gracePeriod);
+            this.FunctionInstanceHeartbeatExpiry = DateTime.UtcNow.AddMilliseconds(gracePeriod);
         }
 
         /// <summary>

@@ -36,7 +36,7 @@ namespace Microsoft.Azure.WebJobs.Logging
                 FunctionName = item.FunctionName,
                 TriggerReason = item.TriggerReason,
                 StartTime = item.StartTime,
-                HeartbeatExpireTime = item.HeartbeatExpireTime,
+                FunctionInstanceHeartbeatExpiry = item.FunctionInstanceHeartbeatExpiry,
                 EndTime = item.EndTime,
 
                 LogOutput = item.LogOutput,
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.WebJobs.Logging
                 TriggerReason = this.TriggerReason,
                 StartTime = this.StartTime,
                 EndTime = this.EndTime,
-                HeartbeatExpireTime = this.HeartbeatExpireTime,
+                FunctionInstanceHeartbeatExpiry = this.FunctionInstanceHeartbeatExpiry,
                 ErrorDetails = this.ErrorDetails,
                 LogOutput = this.LogOutput,
                 Arguments = this.GetArguments()
@@ -96,7 +96,7 @@ namespace Microsoft.Azure.WebJobs.Logging
         // Last heart beat. When EndTime is missing, this lets us guess if the function is still alive. 
         // Whereas Start and End are written very determinsitically in the lifecycle, 
         // heartbeat is special because it's written at potentially random times by a background poller thread. 
-        public DateTime? HeartbeatExpireTime { get; set; }
+        public DateTime? FunctionInstanceHeartbeatExpiry { get; set; }
 
         public string ErrorDetails { get; set; }
 

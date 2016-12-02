@@ -46,7 +46,7 @@ namespace Microsoft.Azure.WebJobs.Logging.FunctionalTests
             {
                 RowKey = Guid.NewGuid().ToString(),
                 StartTime =    t1, 
-                HeartbeatExpireTime = t1, // stale heartbeat
+                FunctionInstanceHeartbeatExpiry = t1, // stale heartbeat
                 
             };
             var item = entity.ToFunctionLogItem();
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.WebJobs.Logging.FunctionalTests
             Assert.Equal(FunctionInstanceStatus.Abandoned, item.GetStatus());
 
             // recent heartbeat means running . 
-            entity.HeartbeatExpireTime = DateTime.UtcNow.AddMinutes(2);
+            entity.FunctionInstanceHeartbeatExpiry = DateTime.UtcNow.AddMinutes(2);
             item = entity.ToFunctionLogItem();
             Assert.Equal(FunctionInstanceStatus.Running, item.GetStatus());
 

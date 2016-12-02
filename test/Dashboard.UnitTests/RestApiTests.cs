@@ -263,7 +263,7 @@ namespace Dashboard.UnitTests
                         FunctionName = Func1,
                         StartTime = time,  // Never Finished
                         LogOutput = "two",
-                        OnRefresh = (me) => { me.HeartbeatExpireTime = time; },// stale heartbeat
+                        OnRefresh = (me) => { me.FunctionInstanceHeartbeatExpiry = time; },// stale heartbeat
                     };
                     list.Add(item);
                     expected.Add(new InvocationLogViewModel

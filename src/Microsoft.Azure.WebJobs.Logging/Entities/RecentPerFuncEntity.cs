@@ -26,7 +26,7 @@ namespace Microsoft.Azure.WebJobs.Logging
                 DisplayName = item.GetDisplayTitle(),
                 FunctionInstanceId = item.FunctionInstanceId.ToString(),
                 StartTime = item.StartTime,
-                HeartbeatExpireTime = item.HeartbeatExpireTime,
+                FunctionInstanceHeartbeatExpiry = item.FunctionInstanceHeartbeatExpiry,
                 EndTime = item.EndTime,
                 HasError = item.HasError,
                 ContainerName = containerName
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.WebJobs.Logging
         public DateTime? EndTime { get; set; }
 
         // Last heart beat. When EndTime is missing, this lets us know the function is still alive. 
-        public DateTime? HeartbeatExpireTime { get; set; }
+        public DateTime? FunctionInstanceHeartbeatExpiry { get; set; }
 
         Guid IFunctionInstanceBaseEntry.FunctionInstanceId
         {
@@ -129,7 +129,11 @@ namespace Microsoft.Azure.WebJobs.Logging
         }
 
         /// <summary>
-        ///  Legacy for errors. We only read from this to check if it's "CompletedFailed" so we pick up legacy errors. 
+        ///  Legacy for errors.
+        ///  Original ("legacy") log writers would write out the function status. 
+        ///  Now, we write separate bits (start time, end time, HasError) and infer the status from that. 
+        ///  However, for the legacy case, it didn't have HasError and so we need to detect an error if the status field was set to "CompletedFailed".
+        ///  New cases don't even write this status field anymore.  
         /// </summary>
         public string RawStatus { get; set; }
     }
